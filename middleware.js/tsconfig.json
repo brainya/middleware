@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": true,
+    "alwaysStrict": true,
+    "allowUnreachableCode": false,
+    "pretty": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": false,
+    "allowJs": false,
+    "noUnusedLocals": false,
+    "strictPropertyInitialization": true,
+    "strict": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "noEmit": false,
+    "baseUrl": ".",
+    "target": "es2018",
+    "types": ["node", "reflect-metadata"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "composite": true
+  },
+  "exclude": ["**/node_modules", "**/dist"]
+}
