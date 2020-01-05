@@ -8,7 +8,7 @@ import {
 test('simple', async () => {
   const test = await axiosClientFactory([middleware1, loggerMiddleware])({
     baseURL: 'http://www.mocky.io',
-    url: '/v2/5e1274723100005a3759405ek',
+    url: '/v2/5e1274723100005a3759405e',
     params: {param1: "1"},
   })
   console.log(test.statusText)
