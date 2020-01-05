@@ -25,7 +25,10 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "composite": true
+    "composite": true,
+    "paths": {
+      "~/*": ["./src/*"]
+    }
   },
   "exclude": ["**/node_modules", "**/dist"]
 }
