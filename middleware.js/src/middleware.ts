@@ -28,3 +28,12 @@ export function middlewareToExecutor(
 ): RequestExecutor {
   return (request: MiddRequestConfig) => middleware(request, executor)
 }
+
+export const clientFactory = (
+  midds: Middleware[],
+  executor: RequestExecutor,
+) => {
+  const reduced: Middleware = midds?.reduce(reduceMiddleware)
+  return middlewareToExecutor(reduced, executor)
+}
+

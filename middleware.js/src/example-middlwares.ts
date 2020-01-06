@@ -1,4 +1,4 @@
-import {Middleware, RequestExecutor} from '.'
+import {Middleware, RequestExecutor} from './middleware'
 import {MiddRequestConfig, MiddError} from './model'
 
 export const middleware1: Middleware = (
