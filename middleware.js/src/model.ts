@@ -1,16 +1,3 @@
-export interface MiddTransformer {
-  (data: any, headers?: any): any
-}
-
-export interface MiddAdapter {
-  (config: MiddRequestConfig): MiddPromise<any>
-}
-
-export interface MiddBasicCredentials {
-  username: string
-  password: string
-}
-
 export interface MiddProxyConfig {
   host: string
   port: number
@@ -45,20 +32,16 @@ export type MiddResponseType =
   | 'text'
   | 'stream'
 
-export interface MiddRequestConfig {
+export interface MiddRequest {
   url?: string
   method?: Method
   baseURL?: string
-  transformRequest?: MiddTransformer | MiddTransformer[]
-  transformResponse?: MiddTransformer | MiddTransformer[]
   headers?: any
   params?: any
   paramsSerializer?: (params: any) => string
   data?: any
   timeout?: number
   withCredentials?: boolean
-  adapter?: MiddAdapter
-  auth?: MiddBasicCredentials
   responseType?: MiddResponseType
   xsrfCookieName?: string
   xsrfHeaderName?: string
@@ -72,6 +55,9 @@ export interface MiddRequestConfig {
   httpsAgent?: any
   proxy?: MiddProxyConfig | false
   cancelToken?: CancelToken
+  attributes?:{
+    requestId?: string | number
+  }
 }
 
 export interface MiddResponse<T = any> {
@@ -79,16 +65,19 @@ export interface MiddResponse<T = any> {
   status: number
   statusText: string
   headers: any
-  config: MiddRequestConfig
+  config: MiddRequest
   request?: any
+  attributes?:{
+    requestId?: string | number
+  }
 }
 
 export interface MiddError<T = any> extends Error {
-  config: MiddRequestConfig
+  config: MiddRequest
   code?: string
   request?: any
   response?: MiddResponse<T>
-  isMiddError: boolean
+  isClientError: boolean
 }
 
 export interface MiddPromise<T = any> extends Promise<MiddResponse<T>> {}
@@ -119,4 +108,39 @@ export interface CancelToken {
 export interface CancelTokenSource {
   token: CancelToken
   cancel: Canceler
+}
+
+export type RequestExecutor = (request: MiddRequest) => Promise<MiddResponse>
+
+export type Middleware = (
+  request: MiddRequest,
+  executor: RequestExecutor,
+) => Promise<MiddResponse>
+
+export const NoOpMiddleware: Middleware = (
+  request: MiddRequest,
+  executor: RequestExecutor,
+) => executor(request)
+
+export function reduceMiddleware(
+  middleware1: Middleware,
+  middleware2: Middleware,
+): Middleware {
+  return (request: MiddRequest, executor: RequestExecutor) =>
+    middleware1(request, middlewareToExecutor(middleware2, executor))
+}
+
+export function middlewareToExecutor(
+  middleware: Middleware,
+  executor: RequestExecutor,
+): RequestExecutor {
+  return (request: MiddRequest) => middleware(request, executor)
+}
+
+export const createRequestExecutor = (
+  midds: Middleware[],
+  executor: RequestExecutor,
+) => {
+  const reduced: Middleware = midds?.reduce(reduceMiddleware)
+  return middlewareToExecutor(reduced, executor)
 }

@@ -1,15 +1,20 @@
 import 'jest'
-import {axiosClientFactory} from '~/factory'
-import {
-  middleware1,
-  loggerMiddleware,
-} from '~/example-middlwares'
+import {  createRequestExecutor, NoOpMiddleware } from "~/model";
+import axios from 'axios'
+import { loggerMiddleware } from '~/middlewares/logge-middleware';
 
-test('simple', async () => {
-  const resp = await axiosClientFactory([middleware1, loggerMiddleware])({
-    baseURL: 'http://www.mocky.io',
-    url: '/v2/5e1274723100005a3759405e',
-    params: {param1: "1"},
+
+const axiosClient = createRequestExecutor([loggerMiddleware],axios)
+
+test('test simple request',async () => {
+  const res = await axiosClient({
+    url: 'https://httpbin.org/get',
+    attributes:{
+      requestId:123
+    },
+    requestId:123
   })
-  console.log(resp)
+  expect(res.status).toBeDefined()
+  expect(res.data).toBeDefined()
+  console.error(res.config)
 })
